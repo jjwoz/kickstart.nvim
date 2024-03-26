@@ -634,6 +634,17 @@ require('lazy').setup({
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
+        phpactor = {
+          cmd = { 'phpactor', 'language-server' },
+          filetypes = { 'php' },
+          root_dir = function(pattern)
+            local cwd = vim.loop.cwd()
+            local util = require 'lspconfig.util'
+            local root = util.root_pattern('composer.json', '.git', '.phpactor.json', '.phpactor.yml')(pattern)
+            -- prefer cwd if root is a descendant
+            return util.path.is_descendant(cwd, root) and cwd or root
+          end,
+        },
         -- But for many setups, the LSP (`tsserver`) will work just fine
         ts_ls = {
           settings = {
