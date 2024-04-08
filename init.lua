@@ -201,6 +201,8 @@ keymap.set('n', '<C-w><down>', '<C-w>-')
 --NOTE: " the order of buffers :bnext and :bprevious will not respect the custom ordering
 keymap.set('n', '<tab>', ':BufferLineCycleNext<CR>', opts)
 keymap.set('n', '<s-tab>', ':BufferLineCyclePrev<CR>', opts)
+keymap.set('n', '<leader>x', ':bdelete!<CR>', opts)
+--
 -- " These commands will move the current buffer backwards or forwards in the bufferline
 -- nnoremap <silent><mymap> :BufferLineMoveNext<CR>
 -- nnoremap <silent><mymap> :BufferLineMovePrev<CR>
@@ -232,6 +234,7 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
+--NOTE: these are easy navigation between panes
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
@@ -635,8 +638,26 @@ require('lazy').setup({
             return util.path.is_descendant(cwd, root) and cwd or root
           end,
         },
+        denols = {
+          root_dir = function(pattern)
+            local cwd = vim.loop.cwd()
+            local util = require 'lspconfig.util'
+            local root = util.root_pattern 'deps.ts'(pattern)
+            -- prefer cwd if root is a descendant
+            return util.path.is_descendant(cwd, root) and cwd or root
+          end,
+        },
         -- But for many setups, the LSP (`tsserver`) will work just fine
         tsserver = {
+          cmd = { 'typescript-language-server', '--stdio' },
+          filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx', 'javascript', 'javascriptreact' },
+          root_dir = function(pattern)
+            local cwd = vim.loop.cwd()
+            local util = require 'lspconfig.util'
+            local root = util.root_pattern 'package.json'(pattern)
+            -- prefer cwd if root is a descendant
+            return util.path.is_descendant(cwd, root) and cwd or root
+          end,
           settings = {
             typescript = {
               inlayHints = {
@@ -873,6 +894,7 @@ require('lazy').setup({
       vim.cmd.hi 'Comment gui=none'
     end,
   },
+  { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
   {
     'RRethy/base16-nvim',
     name = 'base16',
@@ -994,7 +1016,7 @@ require('lazy').setup({
 
 -- NOTE: color scheme
 -- vim.cmd.colorscheme 'gruvbox-baby'
-vim.cmd.colorscheme 'base16-gruvbox-material-dark-hard'
+vim.cmd.colorscheme 'catppuccin-frappe'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
