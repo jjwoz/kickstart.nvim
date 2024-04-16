@@ -293,6 +293,7 @@ require('lazy').setup({
   -- Then, because we use the `config` key, the configuration only runs
   -- after the plugin has been loaded:
   --  config = function() ... end
+
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
@@ -399,6 +400,8 @@ require('lazy').setup({
       -- NOTE: Git Telescope Mappings
       vim.keymap.set('n', '<leader>cm', '<cmd>Telescope git_commits<CR>', { desc = 'Telescope Git commits' })
       vim.keymap.set('n', '<leader>gt', '<cmd>Telescope git_status<CR>', { desc = 'Telescope Git status' })
+      -- NOTE: TodoTelescope
+      vim.keymap.set('n', '<leader>tt', '<cmd>TodoTelescope<CR>', { desc = 'TodoTelescope list' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>fz', function()
@@ -605,8 +608,26 @@ require('lazy').setup({
             return util.path.is_descendant(cwd, root) and cwd or root
           end,
         },
+        denols = {
+          root_dir = function(pattern)
+            local cwd = vim.loop.cwd()
+            local util = require 'lspconfig.util'
+            local root = util.root_pattern 'deps.ts'(pattern)
+            -- prefer cwd if root is a descendant
+            return util.path.is_descendant(cwd, root) and cwd or root
+          end,
+        },
         -- But for many setups, the LSP (`tsserver`) will work just fine
         tsserver = {
+          cmd = { 'typescript-language-server', '--stdio' },
+          filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx', 'javascript', 'javascriptreact' },
+          root_dir = function(pattern)
+            local cwd = vim.loop.cwd()
+            local util = require 'lspconfig.util'
+            local root = util.root_pattern 'package.json'(pattern)
+            -- prefer cwd if root is a descendant
+            return util.path.is_descendant(cwd, root) and cwd or root
+          end,
           settings = {
             typescript = {
               inlayHints = {
@@ -1008,4 +1029,4 @@ require('lazy').setup({
 vim.cmd.colorscheme 'catppuccin-mocha'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
---vim: ts=2 sts=2 sw=2 et
+-- vim: ts=2 sts=2 sw=2 et
