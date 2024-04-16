@@ -19,6 +19,11 @@ return {
         'git_status',
         -- "document_symbols",
       },
+      actions = {
+        open_file = {
+          resize_window = true,
+        },
+      },
       add_blank_line_at_top = false, -- Add a blank line at the top of the tree.
       auto_clean_after_session_restore = false, -- Automatically clean up broken neo-tree buffers saved in sessions
       close_if_last_window = false, -- Close Neo-tree if it is the last window left in the tab
@@ -533,6 +538,7 @@ return {
           --               -- the current file is changed while the tree is open.
           leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
         },
+        hijack_unnamed_buffer_when_opening = false,
         hijack_netrw_behavior = 'open_default', -- netrw disabled, opening a directory opens neo-tree
         -- in whatever position is specified in window.position
         -- "open_current",-- netrw disabled, opening a directory opens within the

@@ -184,34 +184,19 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagn
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
--- Tabby keymaps
-vim.api.nvim_set_keymap('n', '<leader>ta', ':$tabnew<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>tc', ':tabclose<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>to', ':tabonly<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>tn', ':tabn<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>tp', ':tabp<CR>', { noremap = true })
--- move current tab to previous position
-vim.api.nvim_set_keymap('n', '<leader>tmp', ':-tabmove<CR>', { noremap = true })
--- move current tab to next position
-vim.api.nvim_set_keymap('n', '<leader>tmn', ':+tabmove<CR>', { noremap = true })
+local keymap = vim.keymap
+local opts = { noremap = true, silent = true }
+-- New tab
+-- Split window
+keymap.set('n', 'ss', ':split<Return>', opts)
+keymap.set('n', 'sv', ':vsplit<Return>', opts)
+-- Resize window
+keymap.set('n', '<C-w><left>', '<C-w><')
+keymap.set('n', '<C-w><right>', '<C-w>>')
+keymap.set('n', '<C-w><up>', '<C-w>+')
+keymap.set('n', '<C-w><down>', '<C-w>-')
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
+--NOTE: these are easy navigation between panes
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
@@ -285,6 +270,14 @@ require('lazy').setup({
       },
     },
   },
+  {
+    'iamcco/markdown-preview.nvim',
+    cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
+    ft = { 'markdown' },
+    build = function()
+      vim.fn['mkdp#util#install']()
+    end,
+  },
 
   -- NOTE: Plugins can also be configured to run lua code when they are loaded.
   --
@@ -300,7 +293,6 @@ require('lazy').setup({
   -- Then, because we use the `config` key, the configuration only runs
   -- after the plugin has been loaded:
   --  config = function() ... end
-
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
@@ -851,6 +843,56 @@ require('lazy').setup({
       vim.cmd.hi 'Comment gui=none'
     end,
   },
+  {
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    priority = 1000,
+    config = function()
+      require('catppuccin').setup {
+        frappe = {
+          white = '#D9E0EE',
+          darker_black = '#191828',
+          black = '#1E1D2D', --  nvim bg
+          black2 = '#252434',
+          one_bg = '#2d2c3c', -- real bg of onedark
+          one_bg2 = '#363545',
+          one_bg3 = '#3e3d4d',
+          grey = '#474656',
+          grey_fg = '#4e4d5d',
+          grey_fg2 = '#555464',
+          light_grey = '#605f6f',
+          red = '#F38BA8',
+          baby_pink = '#ffa5c3',
+          pink = '#F5C2E7',
+          line = '#383747', -- for lines like vertsplit
+          green = '#ABE9B3',
+          vibrant_green = '#b6f4be',
+          nord_blue = '#8bc2f0',
+          blue = '#89B4FA',
+          yellow = '#FAE3B0',
+          sun = '#ffe9b6',
+          purple = '#d0a9e5',
+          dark_purple = '#c7a0dc',
+          teal = '#B5E8E0',
+          orange = '#F8BD96',
+          cyan = '#89DCEB',
+          statusline_bg = '#232232',
+          lightbg = '#2f2e3e',
+          pmenu_bg = '#ABE9B3',
+          folder_bg = '#89B4FA',
+          lavender = '#c7d1ff',
+        },
+      }
+    end,
+  },
+  {
+    'RRethy/base16-nvim',
+    name = 'base16',
+    priority = 1000,
+    init = function()
+      vim.cmd.hi 'Comment gui=none'
+    end,
+  },
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = true } },
 
@@ -962,8 +1004,8 @@ require('lazy').setup({
   },
 })
 
--- NOTE: color scheme
-vim.cmd.colorscheme 'gruvbox-baby'
+-- vim.cmd.colorscheme 'gruvbox-baby'
+vim.cmd.colorscheme 'catppuccin-mocha'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+--vim: ts=2 sts=2 sw=2 et
