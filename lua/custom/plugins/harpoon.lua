@@ -43,7 +43,7 @@ return {
     vim.keymap.set('n', '<C-c>', function()
       harpoon:list():select(3)
     end)
-    vim.keymap.set('n', '<C-v>', function()
+    vim.keymap.set('n', '<C-b>', function()
       harpoon:list():select(4)
     end)
 
