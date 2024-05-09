@@ -618,7 +618,9 @@ require('lazy').setup({
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
-        intelephense = {},
+        intelephense = {
+          init_options = { licenceKey = '00U49GP1IJO826M' },
+        },
         denols = {
           root_dir = function(pattern)
             local cwd = vim.loop.cwd()
