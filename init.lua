@@ -169,6 +169,9 @@ vim.keymap.set('n', '<C-n>', '<Cmd> Neotree toggle<CR>')
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+-- delete buffer
+vim.keymap.set('n', '<leader>x', '<cmd>bd<Cr>')
+
 -- Comment
 vim.keymap.set('n', '<leader>/', function()
   require('Comment.api').toggle.linewise.current()
@@ -200,6 +203,26 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+--NOTE: keymaps for trouble
+vim.keymap.set('n', '<leader>xx', function()
+  require('trouble').toggle()
+end)
+vim.keymap.set('n', '<leader>xw', function()
+  require('trouble').toggle 'workspace_diagnostics'
+end)
+vim.keymap.set('n', '<leader>xd', function()
+  require('trouble').toggle 'document_diagnostics'
+end)
+vim.keymap.set('n', '<leader>xq', function()
+  require('trouble').toggle 'quickfix'
+end)
+vim.keymap.set('n', '<leader>xl', function()
+  require('trouble').toggle 'loclist'
+end)
+vim.keymap.set('n', 'gR', function()
+  require('trouble').toggle 'lsp_references'
+end)
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -595,17 +618,7 @@ require('lazy').setup({
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
-        phpactor = {
-          cmd = { 'phpactor', 'language-server' },
-          filetypes = { 'php' },
-          root_dir = function(pattern)
-            local cwd = vim.loop.cwd()
-            local util = require 'lspconfig.util'
-            local root = util.root_pattern('composer.json', '.git', '.phpactor.json', '.phpactor.yml')(pattern)
-            -- prefer cwd if root is a descendant
-            return util.path.is_descendant(cwd, root) and cwd or root
-          end,
-        },
+        intelephense = {},
         denols = {
           root_dir = function(pattern)
             local cwd = vim.loop.cwd()
@@ -830,6 +843,14 @@ require('lazy').setup({
       }
     end,
   },
+  -- {
+  --   'olimorris/onedarkpro.nvim',
+  --   priority = 1000, -- Ensure it loads first
+  -- },
+  {
+    'navarasu/onedark.nvim',
+    priority = 1000, -- Ensure it loads first
+  },
   {
     'luisiacc/gruvbox-baby',
     name = 'gruvbox-baby',
@@ -846,6 +867,7 @@ require('lazy').setup({
       vim.cmd.hi 'Comment gui=none'
     end,
   },
+  { 'rose-pine/neovim', name = 'rose-pine' },
   {
     'bluz71/vim-moonfly-colors',
     name = 'moonfly',
@@ -1024,7 +1046,6 @@ require('lazy').setup({
 })
 
 -- vim.cmd.colorscheme 'gruvbox-baby'
-vim.cmd.colorscheme 'catppuccin-mocha'
-
+vim.cmd.colorscheme 'onedark'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
