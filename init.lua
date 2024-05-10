@@ -358,12 +358,20 @@ require('lazy').setup({
           return vim.fn.executable 'make' == 1
         end,
       },
+      {
+        'nvim-telescope/telescope-live-grep-args.nvim',
+        -- This will not install any breaking changes.
+        -- For major updates, this must be adjusted manually.
+        version = '^1.0.0',
+      },
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
+      require('telescope').load_extension 'live_grep_args'
+      local lga_actions = require 'telescope-live-grep-args.actions'
       -- Telescope is a fuzzy finder that comes with a lot of different things that
       -- it can fuzzy find! It's more than just a "file finder", it can search
       -- many different aspects of Neovim, your workspace, LSP, and more!
@@ -389,15 +397,82 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
-        -- pickers = {}
+        defaults = {
+          vimgrep_arguments = {
+            'rg',
+            '-L',
+            '--color=never',
+            '--no-heading',
+            '--with-filename',
+            '--line-number',
+            '--column',
+            '--smart-case',
+          },
+          prompt_prefix = '   ',
+          selection_caret = '  ',
+          entry_prefix = '  ',
+          initial_mode = 'insert',
+          selection_strategy = 'reset',
+          sorting_strategy = 'ascending',
+          layout_strategy = 'horizontal',
+          layout_config = {
+            horizontal = {
+              prompt_position = 'top',
+              preview_width = 0.55,
+              results_width = 0.8,
+            },
+            vertical = {
+              mirror = false,
+            },
+            width = 0.87,
+            height = 0.80,
+            preview_cutoff = 120,
+          },
+          file_sorter = require('telescope.sorters').get_fuzzy_file,
+          file_ignore_patterns = { 'node_modules' },
+          generic_sorter = require('telescope.sorters').get_generic_fuzzy_sorter,
+          path_display = { 'truncate' },
+          winblend = 0,
+          border = {},
+          borderchars = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
+          color_devicons = true,
+          set_env = { ['COLORTERM'] = 'truecolor' }, -- default = nil,
+          file_previewer = require('telescope.previewers').vim_buffer_cat.new,
+          grep_previewer = require('telescope.previewers').vim_buffer_vimgrep.new,
+          qflist_previewer = require('telescope.previewers').vim_buffer_qflist.new,
+          -- Developer configurations: Not meant for general override
+          buffer_previewer_maker = require('telescope.previewers').buffer_previewer_maker,
+          mappings = {
+            n = { ['q'] = require('telescope.actions').close },
+          },
+        },
+
+        extensions_list = { 'themes', 'terms' },
+        pickers = {},
+        file_ignore_patterns = {
+          '^.git/',
+          '^node_modules/',
+          '^vendor/',
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
+          },
+          fzf = {
+            fuzzy = true,
+            override_generic_sorter = true,
+            override_file_sorter = true,
+            case_mode = 'smart_case',
+          },
+          live_grep_args = {
+            auto_quoting = true, -- enable/disable auto-quoting
+            -- define mappings, e.g.
+            mappings = { -- extend mappings
+              i = {
+                ['<C-k>'] = lga_actions.quote_prompt(),
+                ['<C-i>'] = lga_actions.quote_prompt { postfix = ' --iglob ' },
+              },
+            },
           },
         },
       }
@@ -410,7 +485,7 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [Files]' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -423,7 +498,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>gt', '<cmd>Telescope git_status<CR>', { desc = 'Telescope Git status' })
       -- NOTE: TodoTelescope
       vim.keymap.set('n', '<leader>tt', '<cmd>TodoTelescope<CR>', { desc = 'TodoTelescope list' })
-
+      vim.keymap.set('n', '<leader>fg', "<cmd>lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>", { desc = 'Live Grep' })
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>fz', function()
         -- You can pass additional configuration to telescope to change theme, layout, etc.
@@ -515,6 +590,9 @@ require('lazy').setup({
 
           -- Find references for the word under your cursor.
           map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+
+          -- Find references for the word under your cursor ignoring vendor and other file types.
+          -- map('<C-f>', require('telescope.builtin').lsp_references { file_ignore_patterns = { 'node_modules' } }, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
