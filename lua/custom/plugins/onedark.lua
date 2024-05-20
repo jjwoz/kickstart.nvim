@@ -8,7 +8,7 @@ return {
     config = function()
       require('onedark').setup {
         -- Main options --
-        style = 'warmer', -- Default theme style. Choose between 'dark', 'darker', 'cool', 'deep', 'warm', 'warmer' and 'light'
+        style = 'darker', -- Default theme style. Choose between 'dark', 'darker', 'cool', 'deep', 'warm', 'warmer' and 'light'
         transparent = false, -- Show/hide background
         term_colors = true, -- Change terminal color as per the selected theme style
         ending_tildes = false, -- Show the end-of-buffer tildes. By default they are hidden
@@ -45,7 +45,7 @@ return {
           background = true, -- use background color for virtual text
         },
       }
-      vim.cmd [[colorscheme onedark]]
+      -- vim.cmd [[colorscheme onedark]]
     end,
   },
 }
