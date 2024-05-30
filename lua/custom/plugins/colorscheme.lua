@@ -68,7 +68,7 @@ return {
             crust = '#141617',
           },
         },
-        transparent_background = false,
+        transparent_background = true,
         show_end_of_buffer = false,
         integration_default = false,
         integrations = {
@@ -355,14 +355,16 @@ return {
           end,
         },
       }
-      vim.api.nvim_command 'colorscheme catppuccin'
+      vim.cmd 'colorscheme catppuccin'
+      -- vim.api.nvim_command 'colorscheme catppuccin'
     end,
     -- new color scheme
     {
       'rebelot/kanagawa.nvim',
       lazy = false,
-      priority = 1000,
+      priority = 100,
       opts = {
+        transparent = true,
         commentStyle = { italic = false, bold = false },
         keywordStyle = { italic = false, bold = false },
         statementStyle = { italic = false, bold = false },
@@ -440,7 +442,7 @@ return {
       },
       config = function(_, opts)
         require('kanagawa').setup(opts)
-        vim.cmd 'colorscheme kanagawa'
+        vim.cmd 'colorscheme catppuccin'
       end,
     },
   },
