@@ -355,7 +355,7 @@ return {
           end,
         },
       }
-      vim.cmd 'colorscheme catppuccin'
+      -- vim.cmd 'colorscheme catppuccin'
       -- vim.api.nvim_command 'colorscheme catppuccin'
     end,
     -- new color scheme
@@ -442,7 +442,16 @@ return {
       },
       config = function(_, opts)
         require('kanagawa').setup(opts)
-        vim.cmd 'colorscheme catppuccin'
+      end,
+    },
+    {
+      'olimorris/onedarkpro.nvim',
+      lazy = false,
+      priority = 100,
+      opts = {},
+      config = function(_, opts)
+        require('onedarkpro').setup(opts)
+        vim.cmd 'colorscheme onedark'
       end,
     },
   },
