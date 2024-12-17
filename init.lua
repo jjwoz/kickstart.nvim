@@ -100,7 +100,7 @@ vim.g.have_nerd_font = true
 --  For more options, you can see `:help option-list`
 
 -- At default, neovim only display tabline when there are at least two tab pages. If you want always display tabline:
-vim.o.showtabline = true
+-- vim.o.showtabline = true
 
 -- Make line numbers default
 vim.opt.number = true
@@ -238,6 +238,10 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- NOTE: necessary before lazy
+-- put this in your main init.lua file ( before lazy setup )
+vim.g.base46_cache = vim.fn.stdpath 'data' .. '/base46_cache/'
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -356,6 +360,21 @@ require('lazy').setup({
         -- installed and loaded.
         cond = function()
           return vim.fn.executable 'make' == 1
+        end,
+      },
+      -- NVCHAD THEME https://github.com/NvChad/ui
+      {
+        'nvchad/ui',
+        config = function()
+          require 'nvchad'
+        end,
+      },
+
+      {
+        'nvchad/base46',
+        lazy = true,
+        build = function()
+          require('base46').load_all_highlights()
         end,
       },
       {
@@ -699,19 +718,15 @@ require('lazy').setup({
         intelephense = {
           init_options = { licenceKey = '00U49GP1IJO826M' },
         },
-        denols = {
-          root_dir = function(pattern)
-            local cwd = vim.loop.cwd()
-            local util = require 'lspconfig.util'
-            local root = util.root_pattern 'deps.ts'(pattern)
-            -- prefer cwd if root is a descendant
-            return util.path.is_descendant(cwd, root) and cwd or root
-          end,
-        },
         -- But for many setups, the LSP (`tsserver`) will work just fine
         tsserver = {
-          cmd = { 'typescript-language-server', '--stdio' },
-          filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx', 'javascript', 'javascriptreact' },
+          cmd = {
+            os.getenv 'HOME' .. '/.npm-packages/bin/typescript-language-server',
+            '--stdio',
+            '--tsserver-path',
+            os.getenv 'HOME' .. '/.npm-packages/lib/node_modules/typescript-language-server/lib',
+          },
+          filetypes = { 'javascript', 'javascriptreact', 'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx' },
           root_dir = function(pattern)
             local cwd = vim.loop.cwd()
             local util = require 'lspconfig.util'
@@ -782,6 +797,10 @@ require('lazy').setup({
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
+            -- https://github.com/neovim/nvim-lspconfig/pull/3232
+            if server_name == 'tsserver' then
+              server_name = 'ts_ls'
+            end
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for tsserver)
@@ -1033,6 +1052,15 @@ require('lazy').setup({
     },
   },
 })
+
+-- put this after lazy setup for NVChad UI
+dofile(vim.g.base46_cache .. 'defaults')
+dofile(vim.g.base46_cache .. 'statusline')
+
+-- To load all integrations at once
+for _, v in ipairs(vim.fn.readdir(vim.g.base46_cache)) do
+  dofile(vim.g.base46_cache .. v)
+end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
