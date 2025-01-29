@@ -76,5 +76,13 @@ return {
       end,
       desc = 'Keymaps',
     },
+    {
+      '<leader>sw',
+      function()
+        Snacks.picker.grep_word()
+      end,
+      desc = 'Visual selection or word',
+      mode = { 'n', 'x' },
+    },
   },
 }

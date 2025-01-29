@@ -45,7 +45,7 @@ return {
           background = true, -- use background color for virtual text
         },
       }
-       --vim.cmd [[colorscheme onedark]]
+      --vim.cmd [[colorscheme onedark]]
     end,
   },
 }
