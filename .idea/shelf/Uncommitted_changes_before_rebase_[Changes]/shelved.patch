@@ -1,0 +1,43 @@
+Index: lua/custom/plugins/snacks.lua
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>return {\n  'folke/snacks.nvim',\n  priority = 1000,\n  lazy = false,\n  ---@type snacks.Config\n  opts = {\n    -- your configuration comes here\n    -- or leave it empty to use the default settings\n    -- refer to the configuration section below\n    bigfile = { enabled = true },\n    dashboard = { enabled = true },\n    indent = { enabled = true },\n    input = { enabled = true },\n    notifier = { enabled = true },\n    quickfile = { enabled = true },\n    scroll = { enabled = true },\n    statuscolumn = { enabled = true },\n    words = { enabled = true },\n  },\n  keys = {\n    {\n      '<leader>z',\n      function()\n        Snacks.zen()\n      end,\n      desc = 'Toggle Zen Mode',\n    },\n    {\n      '<leader>.',\n      function()\n        Snacks.scratch()\n      end,\n      desc = 'Toggle Scratch Buffer',\n    },\n    {\n      '<leader>S',\n      function()\n        Snacks.scratch.select()\n      end,\n      desc = 'Select Scratch Buffer',\n    },\n    {\n      '<c-/>',\n      function()\n        Snacks.terminal()\n      end,\n      desc = 'Toggle Terminal',\n    },\n    {\n      '<c-_>',\n      function()\n        Snacks.terminal()\n      end,\n      desc = 'which_key_ignore',\n    },\n    {\n      ']]',\n      function()\n        Snacks.words.jump(vim.v.count1)\n      end,\n      desc = 'Next Reference',\n      mode = { 'n', 't' },\n    },\n    {\n      '[[',\n      function()\n        Snacks.words.jump(-vim.v.count1)\n      end,\n      desc = 'Prev Reference',\n      mode = { 'n', 't' },\n    },\n    {\n      '<leader>sk',\n      function()\n        Snacks.picker.keymaps()\n      end,\n      desc = 'Keymaps',\n    },\n  },\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lua/custom/plugins/snacks.lua b/lua/custom/plugins/snacks.lua
+--- a/lua/custom/plugins/snacks.lua	(revision d4f62831cf59de078926df4521fcdeaef1f7d2b9)
++++ b/lua/custom/plugins/snacks.lua	(date 1738112619772)
+@@ -76,5 +76,13 @@
+       end,
+       desc = 'Keymaps',
+     },
++    {
++      '<leader>sw',
++      function()
++        Snacks.picker.grep_word()
++      end,
++      desc = 'Visual selection or word',
++      mode = { 'n', 'x' },
++    },
+   },
+ }
+Index: lua/custom/plugins/onedark.lua
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>-- Lua\n-- https://github.com/navarasu/onedark.nvim?tab=readme-ov-file\nreturn {\n  {\n    'navarasu/onedark.nvim',\n    as = 'onedark',\n    -- Optional dependency\n    config = function()\n      require('onedark').setup {\n        -- Main options --\n        style = 'darker', -- Default theme style. Choose between 'dark', 'darker', 'cool', 'deep', 'warm', 'warmer' and 'light'\n        transparent = false, -- Show/hide background\n        term_colors = true, -- Change terminal color as per the selected theme style\n        ending_tildes = false, -- Show the end-of-buffer tildes. By default they are hidden\n        cmp_itemkind_reverse = false, -- reverse item kind highlights in cmp menu\n\n        -- toggle theme style ---\n        toggle_style_key = nil, -- keybind to toggle theme style. Leave it nil to disable it, or set it to a string, for example \"<leader>ts\"\n        toggle_style_list = { 'dark', 'darker', 'cool', 'deep', 'warm', 'warmer', 'light' }, -- List of styles to toggle between\n\n        -- Change code style ---\n        -- Options are italic, bold, underline, none\n        -- You can configure multiple style with comma separated, For e.g., keywords = 'italic,bold'\n        code_style = {\n          comments = 'italic',\n          keywords = 'none',\n          functions = 'none',\n          strings = 'none',\n          variables = 'none',\n        },\n\n        -- Lualine options --\n        lualine = {\n          transparent = false, -- lualine center bar transparency\n        },\n\n        -- Custom Highlights --\n        colors = {}, -- Override default colors\n        highlights = {}, -- Override highlight groups\n\n        -- Plugins Config --\n        diagnostics = {\n          darker = true, -- darker colors for diagnostic\n          undercurl = true, -- use undercurl instead of underline for diagnostics\n          background = true, -- use background color for virtual text\n        },\n      }\n       --vim.cmd [[colorscheme onedark]]\n    end,\n  },\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lua/custom/plugins/onedark.lua b/lua/custom/plugins/onedark.lua
+--- a/lua/custom/plugins/onedark.lua	(revision d4f62831cf59de078926df4521fcdeaef1f7d2b9)
++++ b/lua/custom/plugins/onedark.lua	(date 1738111139267)
+@@ -45,7 +45,7 @@
+           background = true, -- use background color for virtual text
+         },
+       }
+-       --vim.cmd [[colorscheme onedark]]
++      --vim.cmd [[colorscheme onedark]]
+     end,
+   },
+ }
